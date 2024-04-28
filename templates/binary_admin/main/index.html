@@ -1,0 +1,59 @@
+{% extends "binary_admin/base/base.html" %}
+{% block content %}
+<div class="col-lg-6 float-lg-end bg-info-subtle collapse overflow-auto h" id="collapseExample">
+    <div style=" max-height: 20vh;">
+        {% for i in '0123456789'|make_list %}
+        <div class="container-fluid px-2 border-bottom ">
+            <h1><span class="placeholder col-4"></span></h1>
+            <span class="placeholder col-7"></span>
+            <span class="placeholder col-4"></span>
+            <span class="placeholder col-4"></span>
+            <span class="placeholder col-6"></span>
+            <span class="placeholder col-8"></span>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+<div class="row">
+    <div class="container-fluid col-lg-6">
+        <h1><span class="placeholder col-4"></span></h1>
+        <span class="placeholder col-8"></span>
+        <p></p>
+        <span class="placeholder col-5"></span>
+        <span class="placeholder col-9"></span>
+        <p></p>
+        <p></p>
+        <p></p>
+        <span class="placeholder col-6"></span>
+        <p></p>
+        <span class="placeholder col-8"></span>
+    </div>
+    <div class="col-lg-6  bg-info-subtle overflow-auto d-none d-lg-block" style="height: 92.8vh;">
+        {% for i in '0123456789'|make_list %}
+        <div class="container-fluid px-2 border-bottom ">
+            <h1><span class="placeholder col-4"></span></h1>
+            <span class="placeholder col-7"></span>
+            <span class="placeholder col-4"></span>
+            <span class="placeholder col-4"></span>
+            <span class="placeholder col-6"></span>
+            <span class="placeholder col-8"></span>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+    window.screen.height; //screen height
+    window.screen.width; //screen width
+
+    //For example, 1024x768:
+    if (window.screen.width < 922) {
+        document.getElementById("collapseExample").style.height = "50px";
+    }
+    window.addEventListener("resize", function () {
+        if (window.screen.width < 922) {
+            document.getElementById("collapseExample").style.height = "50px";
+        }
+    }, false)
+</script>
+{% endblock %}
