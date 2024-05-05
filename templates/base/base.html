@@ -14,15 +14,74 @@
             border-color: #28a745;
             box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
         }
+
+        /* blurred background modal for bootstrap v4 */
+        body.modal-open> :not(.modal) {
+            -webkit-filter: blur(5px);
+            -moz-filter: blur(5px);
+            -o-filter: blur(5px);
+            -ms-filter: blur(5px);
+            filter: blur(5px);
+        }
     </style>
+    {% block style %}
+    {% endblock %}
 </head>
 
 <body data-bs-theme="dark">
     {% block main %}
+    <p><span class="text-warning">h</span><span class="text-danger">e</span><span class="text-info">l</span><span
+            class="text-primary">l</span><span class="text-secondary">o</span> <span class="text-success">w</span><span
+            class="text-warning">o</span><span class="text-danger">r</span><span class="text-info">l</span><span
+            class="text-primary">d</span></p>
     {% endblock %}
+    <!-- import jquery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
         crossorigin="anonymous"></script>
+    <!--cambiar tema-->
+    <script>
+        function setColorScheme(scheme) {
+            switch (scheme) {
+                case 'dark':
+                    document.querySelector("body").setAttribute("data-bs-theme", "dark");
+                    console.log('dark');
+
+                    break;
+                case 'light':
+                    document.querySelector("body").setAttribute("data-bs-theme", "ligth");
+                    // Light
+                    break;
+                default:
+                    // Default
+                    console.log('default');
+                    break;
+            }
+        }
+
+        function getPreferredColorScheme() {
+            if (window.matchMedia) {
+                if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                    return 'dark';
+                } else {
+                    return 'light';
+                }
+            }
+            return 'light';
+        }
+        function updateColorScheme() {
+            setColorScheme(getPreferredColorScheme());
+        }
+
+        if (window.matchMedia) {
+            var colorSchemeQuery = window.matchMedia('(prefers-color-scheme: dark)');
+            colorSchemeQuery.addEventListener('change', updateColorScheme);
+        }
+        updateColorScheme();
+    </script>
 </body>
 
 </html>

@@ -6,10 +6,6 @@ from django.contrib import messages
 
 
 # Create your views here.
-def prueba(request):
-    return render(request, "helloworld.html")
-
-
 def register(request: HttpRequest):
     if request.method == "POST":
         try:
@@ -48,3 +44,27 @@ def register(request: HttpRequest):
             return render(request, "binary_admin/user/register.html")
     else:
         return render(request, "binary_admin/user/register.html")
+
+
+def binary_login(request: HttpRequest):
+    if request.method == "POST":
+        try:
+            user: HttpRequest = User.objects.get(email=request.POST["user_or_email"])
+        except User.DoesNotExist:
+            username = request.POST["user_or_email"]
+        else:
+            username = user.username
+        user = authenticate(username=username, password=request.POST["password"])
+        if user is not None:
+            # A backend authenticated the credentials
+            login(request, user)
+            return render(request, "base/base.html")
+        else:
+            # No backend authenticated the credentials
+            messages.error(
+                request, "usuario/correo o contraseña invalida", "auth error"
+            )
+            return render(request, "base/base.html")
+            # Create your views here.
+    else:
+        return render(request, "binary_admin/user/login.html")
