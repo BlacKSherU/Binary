@@ -23,6 +23,7 @@ urlpatterns = [
     path("binary/", include("binary_admin.main.urls")),
     path("binary/", include("binary_admin.user.urls")),
     path("", include("inicio.urls")),
+    path("clientes/", include("clientes.urls")),
 ]
 admin.site.site_header = "Binary"  # default: "Django Administration"
 admin.site.index_title = "Administracion Binary"  # default: "Site administration"

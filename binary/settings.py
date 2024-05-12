@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "binary_admin.user",
     "binary_admin.main",
     "inicio",
+    "clientes",
 ]
 
 MIDDLEWARE = [

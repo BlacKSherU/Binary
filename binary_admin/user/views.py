@@ -58,13 +58,16 @@ def binary_login(request: HttpRequest):
         if user is not None:
             # A backend authenticated the credentials
             login(request, user)
-            return render(request, "base/base.html")
+            if "next" in request.GET:
+                return redirect(request.GET["next"])
+            else:
+                return redirect("inicio")
         else:
             # No backend authenticated the credentials
             messages.error(
-                request, "usuario/correo o contraseña invalida", "auth error"
+                request, "usuario/correo o contraseña invalida", "lo sentimos"
             )
-            return render(request, "base/base.html")
+            return render(request, "binary_admin/user/login.html")
             # Create your views here.
     else:
         return render(request, "binary_admin/user/login.html")

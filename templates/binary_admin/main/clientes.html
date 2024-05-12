@@ -14,9 +14,6 @@
             </div>
         </div>
         {% endfor %}
-        <!--{% for i in '0123456789'|make_list %}
-        
-        {% endfor %}-->
         <div class="container-fluid px-2 border-bottom ">
             <h1><span class="placeholder col-4"></span></h1>
             <span class="placeholder col-7"></span>
@@ -29,13 +26,34 @@
 </div>
 <div class="d-flex flex-row" style="margin-top: 1px;">
     <div class="container-fluid col-lg-8">
-        <h1><span class="placeholder col-4"></span></h1>
+        {{request.get_full_path}}
+        <h1>{{empresa_actual.nombre}}</h1>
+        <h3>datos de contacto:</h3>
+        <div class="d-flex flex-wrap">
+            <h5 class="me-2">correo: {{empresa_actual.user.email}}</h5>
+            <h5 class="ms-2">telefono: {{empresa_actual.telefono}}</h5>
+        </div>
+        {% if empresa_actual.empresa_registrada %}
+        <span class="col-8">{{empresa_actual.user.email}}</span>
+        <p></p>
+        <span class="col-5"></span>
+        <span class="col-9">ultima conexion: {{empresa_actual.user.last_login}}</span>
+        <span class="placeholder col-8"></span>
+        <p></p>
+        <span class="placeholder col-5"></span>
+        <span class="placeholder col-9"></span>
         <p></p>
         <p></p>
         <p></p>
         <span class="placeholder col-6"></span>
         <p></p>
         <span class="placeholder col-8"></span>
+        {% else %}
+        <a href="{% url 'registrar_empresa' empresa_actual.nombre %}" class="btn btn-outline-success">Registrar<span
+                class="bi bi-bookmark-plus-fill"></span></a>
+        <a href="{% url 'eliminar_empresa' empresa_actual.nombre %}" class="btn btn-outline-danger">Eliminar<span
+                class="bi bi-bookmark-x-fill"></span></a>
+        {% endif %}
     </div>
     <div class="col-lg-4  bg-info-subtle overflow-auto d-none d-lg-block" style="height: 92.7vh;">
         {% for empresa in empresas %}
@@ -48,10 +66,13 @@
                     <h2 class="bi bi-body-text "></h2>
                 </a>
             </div>
+            {% if empresa_actual.empresa_registrada %}
             <h3>Encargado: (contador_nombre)</h3>
             <h3>Estado:(activo,inactivo,nuevo_cliente)</h3>
-
-
+            {% else %}
+            <h3>Encargado: No asignado</h3>
+            <h3>Estado: nuevo cliente</h3>
+            {% endif %}
         </div>
         {% endfor %}
         <div class="container-fluid px-2 border-bottom ">
@@ -62,9 +83,6 @@
             <span class="placeholder col-6"></span>
             <span class="placeholder col-8"></span>
         </div>
-        <!--{% for i in '0123456789'|make_list %}
-        
-        {% endfor %}-->
     </div>
 </div>
 {% endblock %}

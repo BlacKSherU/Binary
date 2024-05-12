@@ -52,6 +52,27 @@
             <form method="post">
                 {% csrf_token %}
                 <div class="modal-body">
+                    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+                        {% for message in messages %}
+                        <div id="liveToast" class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
+                            <div class="toast-header">
+                                <i class="bi bi-chat-right-text
+                                        {% if message.level_tag == 'error' %}
+                                        text-danger
+                                        {% else %}
+                                        text-{{ message.level_tag }} 
+                                        {% endif %}
+                                        me-2"></i>
+                                <strong class="me-auto">{{ message.extra_tags }}</strong>
+                                <button type="button" class="btn-close" data-bs-dismiss="toast"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="toast-body">
+                                {{ message }}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
                     <div class="form-floating mb-3">
                         <input type="text" class="form-control" id="user_or_email" name="user_or_email"
                             placeholder="name@example.com">
@@ -76,4 +97,6 @@
         $('#staticBackdrop').modal('show');
     }
 </script>
+{% endblock %}
+{% block messages %}
 {% endblock %}
