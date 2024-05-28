@@ -1,0 +1,92 @@
+{% extends "base/base.html" %}
+{% load static %}
+{% block style %}
+<style>
+    .form-select:focus {
+        border-color: #28a745;
+        box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+    }
+</style>
+{% endblock%}
+{% block main %}
+<div class="sticky-top">
+    {% include "clientes/navbar.html" %}
+
+    <div class="bg-info-subtle collapse" id="collapseExample">
+        <div class="container-fluid overflow-y-scroll" style=" max-height: 20vh;">
+            <h1>si existo :(</h1>
+        </div>
+    </div>
+</div>
+<div class="d-flex flex-row border-top border-2" style="height: 90vh;">
+    <div class="container-fluid col-lg-8 p-3 overflow-y-auto ">
+        <div>
+            <h1>{{cuenta_actual.nombre}}</h1>
+            <h2>numero de cuenta: {{cuenta_actual.numero_cuenta}}</h2>
+            <h2>balance: <span
+                    class="{% if 0 <= cuenta_actual.balance %}text-success{% else %}text-danger{% endif %}">{{cuenta_actual.balance}}
+                    {{cuenta_actual.moneda}}</span>
+            </h2>
+            <form action="{% url 'cliente_cuentas_eliminar' empresa.nombre %}" method="post">
+                {% csrf_token %}
+                <input type="number" name="id" value="{{cuenta_actual.id}}" class="d-none">
+                <button type="submit" class="btn btn-outline-danger">Eliminar<span
+                        class="bi bi-bookmark-x-fill"></span></button>
+            </form>
+        </div>
+    </div>
+    <div class="col-lg-4  bg-info-subtle overflow-y-auto d-none p-3 d-lg-block border-start border-3 "
+        style="height: 100%;">
+        {% if not cuentas %}
+        <h1>no ha registrado ninguna cuenta bancaria</h1>
+        {% else %}
+        <div class="border-bottom bg-black bg-opacity-25 p-3">
+            <h3>balance total:</h3>
+            <h4>bolivares: <span class="{% if bolivares >= 0 %}text-success{% else %}text-danger{% endif %}">
+                    {{bolivares}} Bs</span></h4>
+            <h4>dolares: <span class="{% if dolar >= 0 %}text-success{% else %}text-danger{% endif %}">
+                    {{dolar}} $</span></h4>
+        </div>
+        {% for cuenta in cuentas reversed %}
+        <div class="border-bottom">
+            <form action=" {% url 'cliente_cuentas_editar' empresa.nombre %}" method="post">
+                {% csrf_token %}
+                <input type="number" name="id" value="{{cuenta.id}}" class="d-none">
+                <button type="submit" class="btn text-start px-0">
+                    <h3>{{cuenta.nombre}}</h3>
+                </button>
+            </form>
+            <h4>balance: <span
+                    class="{% if 0 <= cuenta.balance %}text-success{% else %}text-danger{% endif %}">{{cuenta.balance}}
+                    {{cuenta.moneda}}</span>
+            </h4>
+        </div>
+        {% endfor %}
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}
+{% block script %}
+<script>
+    // Example starter JavaScript for disabling form submissions if there are invalid fields
+    (() => {
+        'use strict'
+
+        // Fetch all the forms we want to apply custom Bootstrap validation styles to
+        const forms = document.querySelectorAll('.needs-validation')
+
+        // Loop over them and prevent submission
+        Array.from(forms).forEach(form => {
+            form.addEventListener('submit', event => {
+                if (!form.checkValidity()) {
+                    event.preventDefault()
+                    event.stopPropagation()
+                }
+
+                form.classList.add('was-validated')
+            }, false)
+        })
+    })()
+</script>
+{% endblock %}

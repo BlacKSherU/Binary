@@ -11,19 +11,19 @@ from clientes.models import Empresa
 # Create your views here.
 def inicio(request: HttpRequest):
     if request.method == "POST":
-        try:
+        """try:
             User.objects.get(email=request.POST["registro-email"])
             existe = True
             messages.error(request, "el correo ya esta registrado", "lo sentimos")
         except User.DoesNotExist:
-            existe = False
+            existe = False"""
         try:
             Empresa.objects.get(telefono=request.POST["registro-telefono"])
             existe = True
             messages.error(request, "el telefono ya esta registrado", "lo sentimos")
         except Empresa.DoesNotExist:
-            if not existe:
-                existe = False
+            """if not existe:"""
+            existe = False
         try:
             Empresa.objects.get(nombre=request.POST["registro-nombre"])
             existe = True
@@ -61,7 +61,6 @@ def inicio(request: HttpRequest):
                 random_name,
                 request.POST["registro-email"],
                 random_name,
-                first_name=request.POST["registro-nombre"],
             )
             Empresa.objects.create(
                 user=usuario,
@@ -72,3 +71,7 @@ def inicio(request: HttpRequest):
         return render(request, "inicio/index.html")
     else:
         return render(request, "inicio/index.html")
+
+
+def no_lo_olvides(request: HttpRequest):
+    return render(request, "inicio/noloolvides.html")

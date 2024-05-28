@@ -46,26 +46,32 @@ def cliente(request: HttpRequest, empresa_nombre):
         return redirect("binary_main")
 
 
+@user_passes_test(is_staff, "login")
 def registrar_empresa(request: HttpRequest, empresa_nombre):
-    empresa = Empresa.objects.get(nombre=empresa_nombre)
-    empresa.Empresa_registrada = True
-    empresa.save()
-    empresa.user.user_permissions.add(
-        Permission.objects.get(codename="register_company")
-    )
-    send_mail(
-        "Bienvenido a Binary",
-        "felicidades por unirte al equipo de binary pulsa el siguiente enlace para crear su usuario https://firmabinary.pythonanywhere.com"
-        + resolve_url("register_cliente", empresa.user.username),
-        "firmabinary@gmail.com",
-        [
-            empresa.user.email,
-        ],
-        fail_silently=False,
-    )
-    return redirect("binary_clientes", empresa_nombre)
+    try:
+        empresa = Empresa.objects.get(nombre=empresa_nombre)
+        existe = True
+    except Empresa.DoesNotExist:
+        existe = False
+    if existe:
+        if not empresa.is_registered:
+            empresa.can_register = True
+            empresa.save()
+            send_mail(
+                "Bienvenido a Binary",
+                "felicidades por unirte al equipo de binary pulsa el siguiente enlace para crear su usuario https://firmabinary.pythonanywhere.com"
+                + resolve_url("register_cliente", empresa.user.username),
+                "firmabinary@gmail.com",
+                [
+                    empresa.user.email,
+                ],
+                fail_silently=False,
+            )
+        return redirect("binary_clientes", empresa_nombre)
+    else:
+        return redirect("binary_main")
 
 
+@user_passes_test(is_staff, "login")
 def eliminar_empresa(request: HttpRequest, empresa_nombre):
-
     pass
