@@ -5,28 +5,26 @@
         {% for empresa in empresas %}
         <div class="container-fluid px-2 border-bottom ">
             <div class="d-flex justify-content-between ">
-                <a href="" class="nav-link">
-                    <h1 class="text-capitalize">{{empresa.nombre}}</h1>
+                <a href="" class="nav-link col-9">
+                    <h1 class="text-capitalize text-truncate">{{empresa.nombre}}</h1>
                 </a>
-                <a href="" class="nav-link d-inline-flex align-items-center">
+                <a href="{% url 'binary_clientes' empresa.nombre %}" class="nav-link d-inline-flex align-items-center">
                     <h2 class="bi bi-body-text "></h2>
                 </a>
             </div>
+            {% if empresa_actual.empresa_registrada %}
+            <h3>Encargado: (contador_nombre)</h3>
+            <h3>Estado:(activo,inactivo,nuevo_cliente)</h3>
+            {% else %}
+            <h3>Encargado: No asignado</h3>
+            <h3>Estado: nuevo cliente</h3>
+            {% endif %}
         </div>
         {% endfor %}
-        <div class="container-fluid px-2 border-bottom ">
-            <h1><span class="placeholder col-4"></span></h1>
-            <span class="placeholder col-7"></span>
-            <span class="placeholder col-4"></span>
-            <span class="placeholder col-4"></span>
-            <span class="placeholder col-6"></span>
-            <span class="placeholder col-8"></span>
-        </div>
     </div>
 </div>
 <div class="d-flex flex-row" style="margin-top: 1px;">
     <div class="container-fluid col-lg-8">
-        {{request.get_full_path}}
         <h1>{{empresa_actual.nombre}}</h1>
         <h3>datos de contacto:</h3>
         <div class="d-flex flex-wrap">
@@ -75,14 +73,7 @@
             {% endif %}
         </div>
         {% endfor %}
-        <div class="container-fluid px-2 border-bottom ">
-            <h1><span class="placeholder col-4"></span></h1>
-            <span class="placeholder col-7"></span>
-            <span class="placeholder col-4"></span>
-            <span class="placeholder col-4"></span>
-            <span class="placeholder col-6"></span>
-            <span class="placeholder col-8"></span>
-        </div>
+
     </div>
 </div>
 {% endblock %}

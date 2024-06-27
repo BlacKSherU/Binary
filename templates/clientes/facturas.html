@@ -1,0 +1,171 @@
+{% extends "base/base.html" %}
+{% load static %}
+{% block main %}
+<div class="sticky-top">
+    {% include "clientes/navbar.html" %}
+
+    <div class="bg-info-subtle collapse" id="collapseExample">
+        <div class="container-fluid overflow-y-scroll" style=" max-height: 20vh;">
+            <h1>si existo :(</h1>
+        </div>
+    </div>
+</div>
+<div class="d-flex flex-row border-top border-2" style="height: 90vh;">
+    <div class="container-fluid col-lg-8 p-3 overflow-y-auto ">
+        <h1>Nueva factura</h1>
+        <div class="collapse show" id="collapse_form">
+            <div class="d-flex">
+                <h1>factura cliente</h1>
+                <button class="btn" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_form"
+                    aria-controls="collapse_form" aria-expanded="true">
+                    <i class="bi bi-arrow-left-right"></i>
+                </button>
+            </div>
+            <form id="factura" action="{% url 'agregar_facturas' empresa.nombre %}" method="post"
+                class="needs-validation" novalidate>
+                {% csrf_token %}
+                <input type="text" name="tipo" id="" class="d-none" value="cliente">
+                <div class="mb-3">
+                    <div class="form-floating">
+                        <select class="form-select" id="banco1" name="banco" aria-label="Floating label select example"
+                            required>
+                            {% for cuenta in cuentas %}
+                            <option value="{{cuenta.id}}">{{cuenta.nombre}}</option>
+                            {% empty %}
+                            <option disabled value="">cree una cuenta</option>
+                            {% endfor %}
+                        </select>
+                        <label for="banco1">cuenta bancaria</label>
+                    </div>
+                </div>
+                <div class="d-flex">
+                    <div class="mb-3">
+                        <label for="producto">Producto</label>
+                        <input class="form-control" type="text" id="producto1" required list="cars">
+                        <datalist id="cars">
+                            {% for producto in productos %}
+                            <option value="{{producto.id}}">{{producto.nombre}}</option>
+                            {% empty %}
+                            <option disabled value="">cree una producto</option>
+                            {% endfor %}
+                        </datalist>
+                        <div class="invalid-feedback">
+                            <p>debe rellenar este campo</p>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="cantidad">cantidad</label>
+                        <input class="form-control" type="number" id="cantidad1" step="1" min="0">
+                    </div>
+                    <button class="btn align-self-center" id="agregar1" type="button"><i
+                            class=" bi bi-plus-circle"></i></button>
+                </div>
+                <div id="lista1">
+                </div>
+                <input class="btn btn-success align-self-center" type="submit" value="registrar">
+            </form>
+        </div>
+        <div class="collapse" id="collapse_form">
+            <div class="d-flex">
+                <h1>factura proveedor</h1>
+                <button class="btn" type="button" data-bs-toggle="collapse" data-bs-target="#collapse_form"
+                    aria-controls="collapse_form" aria-expanded="false">
+                    <i class="bi bi-arrow-left-right"></i>
+            </div>
+            </button>
+            <form id="factura" action="{% url 'agregar_facturas' empresa.nombre %}" method="post"
+                class="needs-validation" novalidate>
+                {% csrf_token %}
+                <input type="text" name="tipo" id="" class="d-none" value="proveedor">
+                <div class="mb-3">
+                    <div class="form-floating">
+                        <select class="form-select" id="banco1" name="banco" aria-label="Floating label select example"
+                            required>
+                            {% for cuenta in cuentas %}
+                            <option value="{{cuenta.id}}">{{cuenta.nombre}}</option>
+                            {% empty %}
+                            <option disabled value="">cree una cuenta</option>
+                            {% endfor %}
+                        </select>
+                        <label for="banco1">cuenta bancaria</label>
+                    </div>
+                </div>
+                <div class="d-flex">
+                    <div class="mb-3">
+                        <label for="producto">Producto</label>
+                        <input class="form-control" type="text" id="producto2" required list="cars">
+                        <datalist id="cars">
+                            {% for producto in productos %}
+                            <option value="{{producto.id}}">{{producto.nombre}}</option>
+                            {% empty %}
+                            <option disabled value="">cree una producto</option>
+                            {% endfor %}
+                        </datalist>
+                        <div class="invalid-feedback">
+                            <p>debe rellenar este campo</p>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="cantidad">cantidad</label>
+                        <input class="form-control" type="number" id="cantidad2" step="1" min="0">
+                    </div>
+                    <button class="btn align-self-center" id="agregar2" type="button"><i
+                            class=" bi bi-plus-circle"></i></button>
+                </div>
+                <div id="lista2">
+                </div>
+                <input class="btn btn-success align-self-center" type="submit" value="registrar">
+            </form>
+        </div>
+    </div>
+    <div class="col-lg-4  bg-info-subtle overflow-y-auto d-none d-lg-block border-start border-3 "
+        style="height: 100%;">
+        {% if not facturas %}
+        <h1>no hay facturas</h1>
+        {% else %}
+        {% for factura in facturas %}
+        <h1>Nº{{factura.id}} monto: <span
+                class="text-{%if factura.obtener_monto >= 0%}success{% else %}danger{%endif%}">{{factura.obtener_monto}}</span>
+        </h1>
+        {% endfor %}
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}
+{% block script %}
+<script>
+    document.getElementById("agregar1").addEventListener("click", function (e) {
+        document.getElementById("lista1").innerHTML += "<div name='pedido' class='d-flex'>\n" +
+            "<input class='form-control' id='producto' name='producto' type='text' value='" + document.getElementById("producto1").value + "'>\n" +
+            '<input class="form-control" type="number" id="productocantidad" name="productocantidad" step="1" min="0" value="' + document.getElementById("cantidad1").value + '">\n' +
+            '<button class="btn align-self-center" name="eliminar" type="button"><i class=" bi bi-dash-circle"></i></button>' +
+            "</div>\n";
+        document.getElementById("producto1").value = "";
+        document.getElementById("cantidad1").value = "";
+        var elementos = document.getElementsByName("pedido");
+        for (let i = 1; i <= elementos.length; i++) {
+            elementos[i - 1].querySelector("button").addEventListener("click", function (e) {
+                e.currentTarget.parentElement.remove()
+            })
+        }
+
+    })
+    document.getElementById("agregar2").addEventListener("click", function (e) {
+        document.getElementById("lista2").innerHTML += "<div name='pedido' class='d-flex'>\n" +
+            "<input class='form-control' id='producto' name='producto' type='text' value='" + document.getElementById("producto2").value + "'>\n" +
+            '<input class="form-control" type="number" id="productocantidad" name="productocantidad" step="1" min="0" value="' + document.getElementById("cantidad2").value + '">\n' +
+            '<button class="btn align-self-center" name="eliminar" type="button"><i class=" bi bi-dash-circle"></i></button>' +
+            "</div>\n";
+        document.getElementById("producto2").value = "";
+        document.getElementById("cantidad2").value = "";
+        var elementos = document.getElementsByName("pedido");
+        for (let i = 1; i <= elementos.length; i++) {
+            elementos[i - 1].querySelector("button").addEventListener("click", function (e) {
+                e.currentTarget.parentElement.remove()
+            })
+        }
+
+    })
+</script>
+{% endblock %}

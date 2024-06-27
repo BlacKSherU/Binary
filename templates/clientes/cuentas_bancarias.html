@@ -20,51 +20,49 @@
 </div>
 <div class="d-flex flex-row border-top border-2" style="height: 90vh;">
     <div class="container-fluid col-lg-8 p-3 overflow-y-auto ">
-        <div>
-            <h1>Agregar Cuenta Bancaria</h1>
-            <form action="{% url 'cliente_cuentas_agregar' empresa.nombre %}" method="post" class="needs-validation"
-                novalidate>
-                {% csrf_token %}
-                <div class="mb-3">
-                    <label for="Banco">Banco</label>
-                    <input class="form-control" type="text" name="banco" id="Banco" required>
-                    <div class="invalid-feedback">
-                        <p>debe rellenar este campo</p>
-                    </div>
+        <h1>Agregar Cuenta Bancaria</h1>
+        <form action="{% url 'cliente_cuentas_agregar' empresa.nombre %}" method="post" class="needs-validation"
+            novalidate>
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="Banco">Banco</label>
+                <input class="form-control" type="text" name="banco" id="Banco" required>
+                <div class="invalid-feedback">
+                    <p>debe rellenar este campo</p>
                 </div>
-                <div class="mb-3">
-                    <label for="numero_cuenta">numero de cuenta</label>
-                    <input class="form-control" type="text" name="numero_cuenta" id="numero_cuenta" maxlength="40"
-                        required>
-                    <div class="invalid-feedback">
-                        <p>debe rellenar este campo</p>
-                    </div>
+            </div>
+            <div class="mb-3">
+                <label for="numero_cuenta">numero de cuenta</label>
+                <input class="form-control" type="text" name="numero_cuenta" id="numero_cuenta" maxlength="40" required>
+                <div class="invalid-feedback">
+                    <p>debe rellenar este campo</p>
                 </div>
-                <div class="d-flex justify-content-around">
-                    <div class="mb-3 d-flex">
-                        <div class="me-1">
-                            <label for="saldo">saldo actual</label>
-                            <input class="form-control" type="number" name="saldo" id="saldo" step="0.01" required>
-                            <div class="invalid-feedback">
-                                <p>debe rellenar este campo</p>
-                            </div>
-                        </div>
-                        <div>
-                            <label for="validationCustom04">moneda</label>
-                            <select class="form-select" id="validationCustom04" name="moneda" required>
-                                <option selected>Bs</option>
-                                <option>$</option>
-                            </select>
-                            <div class="invalid-feedback">
-                                Please select a valid state.
-                            </div>
+            </div>
+            <div class="d-flex justify-content-around">
+                <div class="mb-3 d-flex">
+                    <div class="me-1">
+                        <label for="saldo">saldo actual</label>
+                        <input class="form-control" type="number" name="saldo" id="saldo" step="0.01" required>
+                        <div class="invalid-feedback">
+                            <p>debe rellenar este campo</p>
                         </div>
                     </div>
-                    <input class="btn btn btn-success align-self-center" type="submit" value="registrar">
+                    <div>
+                        <label for="validationCustom04">moneda</label>
+                        <select class="form-select" id="validationCustom04" name="moneda" required>
+                            <option selected>Bs</option>
+                            <option>$</option>
+                        </select>
+                        <div class="invalid-feedback">
+                            Please select a valid state.
+                        </div>
+                    </div>
+                </div>
+                <input class="btn btn btn-success align-self-center" type="submit" value="registrar">
 
-                </div>
-            </form>
-        </div>
+            </div>
+        </form>
+
     </div>
     <div class="col-lg-4  bg-info-subtle overflow-y-auto d-none p-3 d-lg-block border-start border-3 "
         style="height: 100%;">

@@ -22,4 +22,21 @@ urlpatterns = [
         views.eliminar_cuenta,
         name="cliente_cuentas_eliminar",
     ),
+    path("<str:empresa_nombre>/facturas", views.facturas, name="facturas"),
+    path(
+        "<str:empresa_nombre>/facturas/agregar",
+        views.agregar_factura,
+        name="agregar_facturas",
+    ),
+    path("<str:empresa_nombre>/productos", views.productos, name="productos"),
+    path(
+        "<str:empresa_nombre>/productos/agregar_categoria",
+        views.agregar_categoria,
+        name="productos_agregar_categoria",
+    ),
+    path(
+        "<str:empresa_nombre>/productos/agregar",
+        views.agregar_producto,
+        name="productos_agregar",
+    ),
 ]

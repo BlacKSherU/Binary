@@ -1,11 +1,22 @@
 from django.shortcuts import render, redirect
 from django.http import HttpRequest
-from clientes.models import Empresa, Cuenta_Bancaria
+from clientes.models import (
+    Empresa,
+    Cuenta_Bancaria,
+    Factura_Cliente,
+    Factura_Proveedor,
+    Producto,
+    Pedido,
+    Categoria_Producto,
+)
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
+from operator import attrgetter
+from itertools import chain
+import datetime
 
 
 # Create your views here.
@@ -13,6 +24,7 @@ def prueba(user):
     return False
 
 
+# ---------------------------main---------------------------
 @login_required(login_url="login")
 def main(request: HttpRequest, empresa_nombre):
     try:
@@ -36,6 +48,7 @@ def main(request: HttpRequest, empresa_nombre):
         return redirect("inicio")
 
 
+# ---------------------------cuentas---------------------------
 @login_required(login_url="login")
 def cuentas_bancarias(request: HttpRequest, empresa_nombre):
     try:
@@ -75,6 +88,7 @@ def cuentas_bancarias(request: HttpRequest, empresa_nombre):
         return redirect("inicio")
 
 
+# ---------------------------cuentas agregar---------------------------
 @login_required(login_url="login")
 def agregar_cuenta(request: HttpRequest, empresa_nombre):
     try:
@@ -120,6 +134,7 @@ def agregar_cuenta(request: HttpRequest, empresa_nombre):
         return redirect("inicio")
 
 
+# ---------------------------cuentas editar ---------------------------
 @login_required(login_url="login")
 def editar_cuenta(request: HttpRequest, empresa_nombre):
     try:
@@ -164,6 +179,7 @@ def editar_cuenta(request: HttpRequest, empresa_nombre):
         return redirect("inicio")
 
 
+# ---------------------------cuentas eliminar ---------------------------
 @login_required(login_url="login")
 def eliminar_cuenta(request: HttpRequest, empresa_nombre):
     try:
@@ -193,6 +209,7 @@ def eliminar_cuenta(request: HttpRequest, empresa_nombre):
         return redirect("inicio")
 
 
+# --------------------------- registrar empresa ---------------------------
 def register(request: HttpRequest, codigo):
     try:
         user = User.objects.get(username=codigo)
@@ -246,6 +263,237 @@ def register(request: HttpRequest, codigo):
                     "clientes/register.html",
                     {"codigo": codigo, "cuadro": "cuadro1", "existe": "disabled"},
                 )
+        else:
+            return redirect("inicio")
+    else:
+        return redirect("inicio")
+
+
+# ---------------------------facturas ---------------------------
+@login_required(login_url="login")
+def facturas(request: HttpRequest, empresa_nombre):
+    try:
+        empresa = Empresa.objects.get(nombre=empresa_nombre)
+        existe = True
+    except Empresa.DoesNotExist:
+        existe = False
+    if existe:
+        if empresa.is_registered:
+            if (request.user == empresa.user) or (
+                request.user in empresa.accountants.all()
+            ):
+                cuentas = Cuenta_Bancaria.objects.filter(empresa=empresa)
+                facturas_cliente = Factura_Cliente.objects.filter(empresa=empresa)
+                facturas_proveedor = Factura_Proveedor.objects.filter(empresa=empresa)
+                productos = Producto.objects.filter(empresa=empresa)
+                facturas = sorted(
+                    chain(facturas_cliente, facturas_proveedor),
+                    key=attrgetter("fecha"),
+                    reverse=True,
+                )
+                return render(
+                    request,
+                    "clientes/facturas.html",
+                    {
+                        "empresa": empresa,
+                        "facturas": facturas,
+                        "productos": productos,
+                        "cuentas": cuentas,
+                    },
+                )
+            else:
+                messages.error(request, "no tiene acceso tontito", "bobito")
+                return redirect(reverse("login") + "?next=" + request.path)
+        else:
+            return redirect("inicio")
+    else:
+        return redirect("inicio")
+
+
+@login_required(login_url="login")
+def agregar_factura(request: HttpRequest, empresa_nombre):
+    try:
+        empresa = Empresa.objects.get(nombre=empresa_nombre)
+        existe = True
+    except Empresa.DoesNotExist:
+        existe = False
+    if existe:
+        if empresa.is_registered:
+            if (request.user == empresa.user) or (
+                request.user in empresa.accountants.all()
+            ):
+                if request.method == "POST":
+                    if request.POST["tipo"] == "cliente":
+                        factura = Factura_Cliente.objects.create(
+                            empresa=empresa,
+                            cuenta_bancaria=Cuenta_Bancaria.objects.get(
+                                id=request.POST["banco"]
+                            ),
+                            fecha=datetime.datetime.now(),
+                        )
+                        productos = request.POST.getlist("producto")
+                        cantidades = request.POST.getlist("productocantidad")
+                        for i in range(len(productos)):
+                            pedido = Pedido.objects.filter(
+                                empresa=empresa,
+                                producto=Producto.objects.get(id=productos[i]),
+                                cantidad=cantidades[i],
+                            )
+                            if not pedido:
+                                pedido = Pedido.objects.create(
+                                    empresa=empresa,
+                                    producto=Producto.objects.get(id=productos[i]),
+                                    cantidad=cantidades[i],
+                                )
+                            else:
+                                pedido = pedido[0]
+                            factura.productos.add(pedido)
+                    else:
+                        factura = Factura_Proveedor.objects.create(
+                            empresa=empresa,
+                            cuenta_bancaria=Cuenta_Bancaria.objects.get(
+                                id=request.POST["banco"]
+                            ),
+                            fecha=datetime.datetime.now(),
+                        )
+                        productos = request.POST.getlist("producto")
+                        cantidades = request.POST.getlist("productocantidad")
+                        for i in range(len(productos)):
+                            pedido = Pedido.objects.filter(
+                                empresa=empresa,
+                                producto=Producto.objects.get(id=productos[i]),
+                                cantidad=cantidades[i],
+                            )
+                            if not pedido:
+                                pedido = Pedido.objects.create(
+                                    empresa=empresa,
+                                    producto=Producto.objects.get(id=productos[i]),
+                                    cantidad=cantidades[i],
+                                )
+                            else:
+                                pedido = pedido[0]
+                            factura.productos.add(pedido)
+                    cuenta_bancaria = Cuenta_Bancaria.objects.get(
+                        id=request.POST["banco"]
+                    )
+                    cuenta_bancaria.balance += factura.obtener_monto()
+                    cuenta_bancaria.save()
+
+                return redirect("facturas", empresa.nombre)
+            else:
+                messages.error(request, "no tiene acceso tontito", "bobito")
+                return redirect(reverse("login") + "?next=" + request.path)
+        else:
+            return redirect("inicio")
+    else:
+        return redirect("inicio")
+
+
+# ---------------------------productos---------------------------
+@login_required(login_url="login")
+def productos(request: HttpRequest, empresa_nombre):
+    try:
+        empresa = Empresa.objects.get(nombre=empresa_nombre)
+        existe = True
+    except Empresa.DoesNotExist:
+        existe = False
+    if existe:
+        if empresa.is_registered:
+            if (request.user == empresa.user) or (
+                request.user in empresa.accountants.all()
+            ):
+                productos = Producto.objects.filter(empresa=empresa)
+                categorias = Categoria_Producto.objects.filter(empresa=empresa)
+                return render(
+                    request,
+                    "clientes/productos.html",
+                    {
+                        "empresa": empresa,
+                        "productos": productos,
+                        "categorias": categorias,
+                    },
+                )
+            else:
+                messages.error(request, "no tiene acceso tontito", "bobito")
+                return redirect(reverse("login") + "?next=" + request.path)
+        else:
+            return redirect("inicio")
+    else:
+        return redirect("inicio")
+
+
+@login_required(login_url="login")
+def agregar_categoria(request: HttpRequest, empresa_nombre):
+    try:
+        empresa = Empresa.objects.get(nombre=empresa_nombre)
+        existe = True
+    except Empresa.DoesNotExist:
+        existe = False
+    if existe:
+        if empresa.is_registered:
+            if (request.user == empresa.user) or (
+                request.user in empresa.accountants.all()
+            ):
+                if request.method == "POST":
+                    if Categoria_Producto.objects.filter(
+                        empresa=empresa, nombre=request.POST["nombre"]
+                    ):
+                        messages.error(request, "cagaste", "lo sentimos")
+                    else:
+                        Categoria_Producto.objects.create(
+                            empresa=empresa,
+                            nombre=request.POST["nombre"],
+                            descripcion=request.POST["descripcion"],
+                        )
+                        messages.success(
+                            request, "categoria agregada con exito", "felicidades"
+                        )
+                return redirect("productos", empresa.nombre)
+            else:
+                messages.error(request, "no tiene acceso tontito", "bobito")
+                return redirect(reverse("login") + "?next=" + request.path)
+        else:
+            return redirect("inicio")
+    else:
+        return redirect("inicio")
+
+
+@login_required(login_url="login")
+def agregar_producto(request: HttpRequest, empresa_nombre):
+    try:
+        empresa = Empresa.objects.get(nombre=empresa_nombre)
+        existe = True
+    except Empresa.DoesNotExist:
+        existe = False
+    if existe:
+        if empresa.is_registered:
+            if (request.user == empresa.user) or (
+                request.user in empresa.accountants.all()
+            ):
+                if request.method == "POST":
+                    if Producto.objects.filter(nombre=request.POST["nombre"]):
+                        messages.error(request, "cagaste", "lo sentimos")
+                    else:
+                        producto = Producto.objects.create(
+                            empresa=empresa,
+                            nombre=request.POST["nombre"],
+                            descripcion=request.POST["descripcion"],
+                            precio_compra=request.POST["precio_compra"],
+                            precio_venta=request.POST["precio_venta"],
+                            producto_antiguo=False,
+                        )
+                        for categoria in request.POST.getlist("categorias"):
+                            producto.categorias.add(
+                                Categoria_Producto.objects.get(id=categoria)
+                            )
+                        producto.save()
+                        messages.success(
+                            request, "producto agregado con exito", "felicidades"
+                        )
+                return redirect("productos", empresa.nombre)
+            else:
+                messages.error(request, "no tiene acceso tontito", "bobito")
+                return redirect(reverse("login") + "?next=" + request.path)
         else:
             return redirect("inicio")
     else:

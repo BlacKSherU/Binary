@@ -3,6 +3,12 @@ from django.db import models
 # Create your models here.
 from django.db import models
 from django.contrib.auth.models import User
+import datetime
+
+
+class monedas(models.TextChoices):
+    bolivares = "Bs"
+    dolares = "$"
 
 
 # Create your models here.
@@ -25,9 +31,6 @@ class Empresa(models.Model):
 
 
 class Cuenta_Bancaria(models.Model):
-    class monedas(models.TextChoices):
-        bolivares = "Bs"
-        dolares = "$"
 
     empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE)
     nombre = models.CharField(max_length=256)
@@ -40,44 +43,59 @@ class Cuenta_Bancaria(models.Model):
     def __str__(self):
         return self.nombre
 
-    def update(self, monto):
-        self.balance += monto
 
-    def mostrar_balance(self):
-        return str(round(self.balance, 2))
-
-
-"""
 class Categoria_Producto(models.Model):
+    empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE, null=True)
     nombre = models.CharField(max_length=50)
-    descripccion = models.TextField()
+    descripcion = models.TextField()
 
     def __str__(self):
         return self.nombre
 
 
 class Producto(models.Model):
+    empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE, null=True)
     nombre = models.CharField(max_length=256)
-    descripccion = models.TextField()
+    descripcion = models.TextField()
     categorias = models.ManyToManyField(Categoria_Producto)
     precio_compra = models.FloatField()
     precio_venta = models.FloatField()
     producto_antiguo = models.BooleanField()
+    moneda = models.CharField(
+        max_length=4, choices=monedas.choices, default=monedas.bolivares
+    )
+
     def __str__(self):
         return self.nombre
 
 
 class Pedido(models.Model):
+    empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE, null=True)
     producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
     cantidad = models.IntegerField()
-    pass
 
 
-class factura_cliente(models.Model):
+class Factura_Cliente(models.Model):
+    empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE, null=True)
     cuenta_bancaria = models.ForeignKey(Cuenta_Bancaria, on_delete=models.CASCADE)
-    monto = models.FloatField()
     productos = models.ManyToManyField(Pedido)
+    fecha = models.DateTimeField(auto_now_add=True, blank=True)
 
-class factura_proveedor(models.Model):
-    pass
-"""
+    def obtener_monto(self):
+        monto = 0
+        for producto in self.productos.all():
+            monto += producto.producto.precio_venta * producto.cantidad
+        return monto
+
+
+class Factura_Proveedor(models.Model):
+    empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE, null=True)
+    cuenta_bancaria = models.ForeignKey(Cuenta_Bancaria, on_delete=models.CASCADE)
+    productos = models.ManyToManyField(Pedido)
+    fecha = models.DateTimeField(auto_now_add=True, blank=True)
+
+    def obtener_monto(self):
+        monto = 0
+        for producto in self.productos.all():
+            monto -= producto.producto.precio_compra * producto.cantidad
+        return monto

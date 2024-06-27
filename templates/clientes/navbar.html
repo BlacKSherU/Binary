@@ -11,14 +11,16 @@
         <div class="collapse navbar-collapse " id="navbarTogglerDemo02">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page"
-                        href="{% url 'cliente_main' empresa.nombre %}">usuario</a>
+                    <a class="nav-link" href="{% url 'cliente_main' empresa.nombre %}">usuario</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'cliente_cuentas' empresa.nombre %}">Cuentas Bancarias</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link disabled" aria-disabled="true">Productos</a>
+                    <a class="nav-link" href="{% url 'facturas' empresa.nombre %}">facturas</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'productos' empresa.nombre %}">Productos</a>
                 </li>
                 <li>
                     <button class="collapse btn btn-success" id="navbarTogglerDemo02" type="button"

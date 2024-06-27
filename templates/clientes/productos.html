@@ -1,0 +1,162 @@
+{% extends "base/base.html" %}
+{% load static %}
+{% block style %}
+<link rel="stylesheet" href="{% static 'css\formulario_verde.css' %}">
+{% endblock %}
+{% block main %}
+<div class="sticky-top">
+    {% include "clientes/navbar.html" %}
+
+    <div class="bg-info-subtle collapse" id="collapseExample">
+        <div class="container-fluid overflow-y-scroll" style=" max-height: 20vh;">
+            <h1>si existo :(</h1>
+        </div>
+    </div>
+</div>
+<div class="d-flex flex-row border-top border-2" style="height: 90vh;">
+    <div class="container-fluid col-lg-8 p-3 overflow-y-auto ">
+        <form action="{% url 'productos_agregar' empresa.nombre %}" method="post" class="needs-validation" novalidate>
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="nombre">nombre</label>
+                <input class="form-control" type="text" name="nombre" id="nombre" required>
+                <div class="invalid-feedback">
+                    <p>debe rellenar este campo</p>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="descripcion">descripccion</label>
+                <textarea class="form-control" id="descripcion" name="descripcion"
+                    placeholder="Required example textarea" required></textarea>
+                <div class="invalid-feedback">
+                    Please enter a message in the textarea.
+                </div>
+            </div>
+            <div class="d-flex justify-content-between  mb-3 flex-wrap">
+                <div class="me-1">
+                    <label for="precio_compra">precio de compra</label>
+                    <input class="form-control" type="number" name="precio_compra" id="precio_compra" step="0.01"
+                        required>
+                    <div class="invalid-feedback">
+                        <p>debe rellenar este campo</p>
+                    </div>
+                </div>
+                <div class="me-1">
+                    <label for="precio_venta">precio de venta</label>
+                    <input class="form-control" type="number" name="precio_venta" id="precio_venta" step="0.01"
+                        required>
+                    <div class="invalid-feedback">
+                        <p>debe rellenar este campo</p>
+                    </div>
+                </div>
+                <div>
+                    <label for="validationCustom04">moneda</label>
+                    <select class="form-select" id="validationCustom04" name="moneda" required>
+                        <option selected>Bs</option>
+                        <option>$</option>
+                    </select>
+                    <div class="invalid-feedback">
+                        Please select a valid state.
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex justify-content-between">
+                <div class="d-flex flex-grow-1 me-3">
+                    <div id="categorias_select" class="flex-grow-1">
+                        <label for="categorias">categoria</label>
+                        <select class="form-select" id="categorias" size="1" name="categorias" multiple
+                            data-placeholder="Choose anything" required>
+                            {% for categoria in categorias %}
+                            <option value="{{categoria.id}}">{{categoria.nombre}}</option>
+                            {% empty %}
+                            <option disabled value="">cree una categoria</option>
+                            {% endfor %}
+                        </select>
+                        <div class="invalid-feedback">
+                            seleccione una categoria
+                        </div>
+                    </div>
+                    <button type="button" class="btn align-self-end" data-bs-toggle="modal"
+                        data-bs-target="#exampleModal">
+                        <i class=" bi bi-plus-circle"></i>
+                    </button>
+                </div>
+                <input class="btn btn btn-success align-self-end" type="submit" value="registrar">
+            </div>
+        </form>
+
+    </div>
+    <div class="col-lg-4  bg-info-subtle overflow-y-auto d-none d-lg-block border-start border-3 "
+        style="height: 100%;">
+        {% for producto in productos %}
+        <h1>{{producto}}</h1>
+        {% empty %}
+        <h1>no hay productos</h1>
+        {% endfor %}
+    </div>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Agregar categoria</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="categoria_form" action="{% url 'productos_agregar_categoria' empresa.nombre %}" method="post"
+                    class="needs-validation" novalidate>
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="nombre">nombre</label>
+                        <input class="form-control" type="text" name="nombre" id="nombre" required>
+                        <div class="invalid-feedback">
+                            <p>debe rellenar este campo</p>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="descripccion">descripccion</label>
+                        <textarea class="form-control" id="descripccion" name="descripcion"
+                            placeholder="Required example textarea" required></textarea>
+                        <div class="invalid-feedback">
+                            Please enter a message in the textarea.
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" form="categoria_form" class="btn btn-success">agregar</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block script %}
+<script>
+    // Example starter JavaScript for disabling form submissions if there are invalid fields
+    (() => {
+        'use strict'
+
+        // Fetch all the forms we want to apply custom Bootstrap validation styles to
+        const forms = document.querySelectorAll('.needs-validation')
+
+        // Loop over them and prevent submission
+        Array.from(forms).forEach(form => {
+            form.addEventListener('submit', event => {
+                if (!form.checkValidity()) {
+                    event.preventDefault()
+                    event.stopPropagation()
+                }
+
+                form.classList.add('was-validated')
+            }, false)
+        })
+    })()
+    document.getElementById("categorias_select").addEventListener("click", function (e) {
+        document.getElementById("categorias").size = 6;
+    })
+    document.getElementById("categorias_select").addEventListener("mouseleave", function (e) {
+        document.getElementById("categorias").size = 1;
+    })
+</script>
+{% endblock %}
