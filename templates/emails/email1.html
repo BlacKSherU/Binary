@@ -1,0 +1,69 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="{% static '.\bootstrap-5.3.3\css\bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static '.\bootstrap-icons-1.11.3\font\bootstrap-icons.css' %}">
+</head>
+
+<body data-bs-theme="light">
+    <div class="d-flex justify-content-center">
+        <div class="col-lg-6 border rounded-5 bg bg-dark-subtle">
+            <p>
+                Lorem ipsum dolor sit amet consectetur adipisicing elit. Odit, sit? Eum, assumenda vitae. Eaque sit et
+                minus
+                earum cum pariatur maiores, obcaecati mollitia aliquid consequuntur ducimus repudiandae molestiae?
+                Officiis,
+                recusandae!
+            </p>
+        </div>
+    </div>
+
+    <script src="{% static 'js\jquery-3.7.1.min.js' %}"></script>
+    <script src="{% static './bootstrap-5.3.3/js/bootstrap.bundle.min.js' %}"></script>
+    <script>
+        function setColorScheme(scheme) {
+            switch (scheme) {
+                case 'dark':
+                    document.querySelector("body").setAttribute("data-bs-theme", "dark");
+                    console.log('dark');
+
+                    break;
+                case 'light':
+                    document.querySelector("body").setAttribute("data-bs-theme", "ligth");
+                    // Light
+                    break;
+                default:
+                    // Default
+                    console.log('default');
+                    break;
+            }
+        }
+
+        function getPreferredColorScheme() {
+            if (window.matchMedia) {
+                if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                    return 'dark';
+                } else {
+                    return 'light';
+                }
+            }
+            return 'light';
+        }
+        function updateColorScheme() {
+            setColorScheme(getPreferredColorScheme());
+        }
+
+        if (window.matchMedia) {
+            var colorSchemeQuery = window.matchMedia('(prefers-color-scheme: dark)');
+            colorSchemeQuery.addEventListener('change', updateColorScheme);
+        }
+        updateColorScheme();
+    </script>
+</body>
+
+</html>

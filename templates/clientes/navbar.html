@@ -11,16 +11,16 @@
         <div class="collapse navbar-collapse " id="navbarTogglerDemo02">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'cliente_main' empresa.nombre %}">usuario</a>
+                    <a class="nav-link" href="{% url 'cliente_main' empresa.nombre %}">Usuario</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'cliente_cuentas' empresa.nombre %}">Cuentas Bancarias</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'facturas' empresa.nombre %}">facturas</a>
+                    <a class="nav-link" href="{% url 'facturas' empresa.nombre %}">Facturas</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'productos' empresa.nombre %}">Productos</a>
+                    <a class="nav-link" href="{% url 'productos' empresa.nombre %}">Productos/Servicios</a>
                 </li>
                 <li>
                     <button class="collapse btn btn-success" id="navbarTogglerDemo02" type="button"
@@ -31,9 +31,9 @@
                 </li>
             </ul>
             <form class="d-flex" role="search">
-                <input class="form-control me-2 border-success-subtle " type="search" placeholder="Search"
+                <input class="form-control me-2 border-success-subtle " type="search" placeholder="Buscar"
                     aria-label="Search">
-                <button class="btn btn-success" type="submit">Search</button>
+                <button class="btn btn-success" type="submit">Buscar</button>
             </form>
         </div>
     </div>
