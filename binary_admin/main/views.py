@@ -58,9 +58,27 @@ def registrar_empresa(request: HttpRequest, empresa_nombre):
             empresa.can_register = True
             empresa.save()
             send_mail(
-                "Bienvenido a Binary",
-                "felicidades por unirte al equipo de binary pulsa el siguiente enlace para crear su usuario https://firmabinary.pythonanywhere.com"
-                + resolve_url("register_cliente", empresa.user.username),
+                "Acceso al Sistema de Binary CA",
+                f"""
+Estimado/a {empresa.nombre},
+
+¡Es un placer informarle que su cuenta ha sido configurada exitosamente en nuestro sistema! A continuación, ingrese al enlace que está a continuación para acceder:
+
+https://firmabinary.pythonanywhere.com{resolve_url("register_cliente", empresa.user.username)}
+
+Por motivos de seguridad, le recomendamos NO compartir este link con terceros
+
+Si tiene algún problema para iniciar sesión o necesita asistencia adicional, no dude en comunicarse con nuestro equipo.
+
+Gracias por confiar en Binary CA para sus necesidades contables y financieras. Estamos aquí para ayudarle en cada paso del camino.
+
+Saludos cordiales,
+Equipo de Binary CA
+
+Binary CA
+Calle 23 entre carreras 17 y 18 Torre Binary. 
+Municipio Iribarren. Barquisimeto. Estado Lara. Venezuela.
+""",
                 "firmabinary@gmail.com",
                 [
                     empresa.user.email,

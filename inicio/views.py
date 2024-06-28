@@ -51,7 +51,7 @@ def inicio(request: HttpRequest):
                 random_name,
                 request.POST["registro-email"],
                 random_name,
-                last_name=request.POST["marialadilla"]
+                last_name=request.POST["marialadilla"],
             )
             empresaXD = Empresa.objects.create(
                 user=usuario,
@@ -72,8 +72,7 @@ o	Banco: Banesco
 o	BINARY CA
 o	RIF: J-89457109
 o	Telefono: 04129872828
-o	Pago con tarjeta de crédito: Puede realizar el pago a través de nuestro portal seguro en [URL del Portal de Pago].
-o	Pago en divisas:
+
 o	Zelle 
 o	firmabinary@gmail.com 
 
